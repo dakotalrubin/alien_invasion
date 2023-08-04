@@ -2,8 +2,7 @@
 # Date: August 3rd, 2023
 # File: alien_invasion.py contains everything related to running the game.
 
-import sys
-import pygame
+import sys, pygame
 from settings import Settings
 from ship import Ship
 
@@ -26,19 +25,21 @@ class AlienInvasion:
     """Start main game loop."""
     def run_game(self):
         while True:
-
-            # Listen for keyboard and mouse events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-
-            # Redraw the screen during each pass through the loop
-            self.screen.fill(self.settings.bg_color)
-            self.ship.blitme()
-
-            # Make the most recently-drawn screen visible
-            pygame.display.flip()
+            self.check_events()
+            self.update_screen()
             self.clock.tick(60) # Game runs at 60 frames per second
+
+    """Listen for keypress and mouse events."""
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+    """Update images on-screen and flip to new screen."""
+    def update_screen(self):
+        self.screen.fill(self.settings.bg_color)
+        self.ship.blitme()
+        pygame.display.flip()
 
 if __name__ == '__main__':
 
