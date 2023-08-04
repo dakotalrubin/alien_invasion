@@ -22,7 +22,7 @@ class AlienInvasion:
         # Create a Ship instance using the current instance of AlienInvasion
         self.ship = Ship(self)
 
-    """Start main game loop."""
+    """Run main game loop."""
     def run_game(self):
         while True:
             self.check_events()
@@ -34,31 +34,42 @@ class AlienInvasion:
     def check_events(self):
         for event in pygame.event.get():
 
-            # Check if player exited the game window
+            # Check if player wants to quit game
             if event.type == pygame.QUIT:
                 sys.exit()
 
             # Check if player pressed a key
             elif event.type == pygame.KEYDOWN:
-
-                # Check if right arrow key pressed
-                if event.key == pygame.K_RIGHT:
-                    self.ship.moving_right = True
-
-                # Check if left arrow key pressed
-                elif event.key == pygame.K_LEFT:
-                    self.ship.moving_left = True
+                self.check_keydown_events(event)
 
             # Check if player released a key
             elif event.type == pygame.KEYUP:
+                self.check_keyup_events(event)
 
-                # Check if right arrow key released
-                if event.key == pygame.K_RIGHT:
-                    self.ship.moving_right = False
+    """Listen for key presses."""
+    def check_keydown_events(self, event):
 
-                # Check if left arrow key released
-                elif event.key == pygame.K_LEFT:
-                    self.ship.moving_left = False
+        # Check if 'q' key pressed to quit game
+        if event.key == pygame.K_q:
+            sys.exit()
+
+        # Check if right arrow key pressed
+        elif event.key == pygame.K_RIGHT:
+            self.ship.moving_right = True
+
+        # Check if left arrow key pressed
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = True
+
+    """Listen for key releases."""
+    def check_keyup_events(self, event):
+        # Check if right arrow key released
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = False
+
+        # Check if left arrow key released
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = False
 
     """Update images on-screen and flip to new screen."""
     def update_screen(self):
