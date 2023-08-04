@@ -26,14 +26,39 @@ class AlienInvasion:
     def run_game(self):
         while True:
             self.check_events()
+            self.ship.update() # Update player ship position
             self.update_screen()
             self.clock.tick(60) # Game runs at 60 frames per second
 
     """Listen for keypress and mouse events."""
     def check_events(self):
         for event in pygame.event.get():
+
+            # Check if player exited the game window
             if event.type == pygame.QUIT:
                 sys.exit()
+
+            # Check if player pressed a key
+            elif event.type == pygame.KEYDOWN:
+
+                # Check if right arrow key pressed
+                if event.key == pygame.K_RIGHT:
+                    self.ship.moving_right = True
+
+                # Check if left arrow key pressed
+                elif event.key == pygame.K_LEFT:
+                    self.ship.moving_left = True
+
+            # Check if player released a key
+            elif event.type == pygame.KEYUP:
+
+                # Check if right arrow key released
+                if event.key == pygame.K_RIGHT:
+                    self.ship.moving_right = False
+
+                # Check if left arrow key released
+                elif event.key == pygame.K_LEFT:
+                    self.ship.moving_left = False
 
     """Update images on-screen and flip to new screen."""
     def update_screen(self):
