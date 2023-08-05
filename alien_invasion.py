@@ -13,6 +13,7 @@ class AlienInvasion:
 
     """Initialize game and create resources."""
     def __init__(self):
+
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
@@ -43,6 +44,7 @@ class AlienInvasion:
             # Update game object positions
             self.ship.update()
             self.update_bullets()
+            self.update_aliens()
 
             # Draw new screen with current game object positions
             self.update_screen()
@@ -113,6 +115,11 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    """Check if fleet at edge-of-screen, then update alien positions."""
+    def update_aliens(self):
+        self.check_fleet_edges()
+        self.aliens.update()
+
     """Create a fleet of aliens."""
     def create_fleet(self):
 
@@ -142,6 +149,22 @@ class AlienInvasion:
         new_alien.rect.x = x_position
         new_alien.rect.y = y_position
         self.aliens.add(new_alien)
+
+    """Respond properly if an alien reaches left or right edge of screen."""
+    def check_fleet_edges(self):
+
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self.change_fleet_direction()
+                break
+
+    """Drop fleet down the screen and change fleet direction."""
+    def change_fleet_direction(self):
+
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+
+        self.settings.fleet_direction *= -1
 
     """Update images on-screen and flip to new screen."""
     def update_screen(self):

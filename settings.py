@@ -21,4 +21,11 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 20
         self.bullet_color = (247, 35, 49)
-        self.bullets_allowed = 7
+        self.bullets_allowed = 8
+
+        # Alien settings
+        self.alien_speed = 1.0
+        self.fleet_drop_speed = 10
+
+        # fleet_direction of 1 means right, fleet_direction of -1 means left
+        self.fleet_direction = 1
