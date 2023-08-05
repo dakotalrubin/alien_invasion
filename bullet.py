@@ -8,9 +8,9 @@ from pygame.sprite import Sprite
 """This class manages all bullet behavior for Alien Invasion."""
 class Bullet(Sprite):
 
-    """Initialize a bullet object at the ship's current position."""
+    """Initialize bullet object at the ship's current position."""
     def __init__(self, game):
-        super().__init__() # Inherit properly from Sprite parent class
+        super().__init__()
         self.screen = game.screen
         self.settings = game.settings
         self.color = self.settings.bullet_color
