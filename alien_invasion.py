@@ -34,6 +34,7 @@ class AlienInvasion:
 
     """Run main game loop."""
     def run_game(self):
+
         while True:
 
             # Check for player input
@@ -49,6 +50,7 @@ class AlienInvasion:
 
     """Listen for keypress and mouse events."""
     def check_events(self):
+
         for event in pygame.event.get():
 
             # Check if player wants to quit game
@@ -84,6 +86,7 @@ class AlienInvasion:
 
     """Listen for key releases."""
     def check_keyup_events(self, event):
+
         # Check if right arrow key released
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
@@ -94,13 +97,14 @@ class AlienInvasion:
 
     """Create new bullet and add to bullet group if allowed."""
     def fire_bullet(self):
+
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
 
     """Update bullet positions and despawn bullets that go off-screen."""
     def update_bullets(self):
-        
+
         # Update bullet positions
         self.bullets.update()
 
@@ -111,11 +115,37 @@ class AlienInvasion:
 
     """Create a fleet of aliens."""
     def create_fleet(self):
+
+        # Create space around aliens equal to one alien size
         alien = Alien(self)
-        self.aliens.add(alien)
+        alien_width, alien_height = alien.rect.size
+
+        # The x-coordinate and y-coordinate of the next alien to spawn
+        current_x, current_y = alien_width, alien_height
+
+        # Create alien and keep adding aliens until there's no room left
+        while current_y < (self.settings.screen_height - (alien_height * 3)):
+            while current_x < (self.settings.screen_width - (alien_width * 2)):
+                self.create_alien(current_x, current_y)
+                current_x += alien_width * 2
+
+            # Finished spawning a row of aliens
+            # Reset x-coordinate and increment y-coordinate
+            current_x = alien_width
+            current_y += alien_height * 2
+
+    """Create alien and add to row."""
+    def create_alien(self, x_position, y_position):
+
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
 
     """Update images on-screen and flip to new screen."""
     def update_screen(self):
+
         self.screen.fill(self.settings.bg_color)
 
         # Re-draw active bullets with updated positions

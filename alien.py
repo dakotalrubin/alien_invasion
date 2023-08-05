@@ -10,6 +10,7 @@ class Alien(Sprite):
 
     """Initialize an alien and set its starting position."""
     def __init__(self, game):
+
         super().__init__()
         self.screen = game.screen
 

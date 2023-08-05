@@ -10,6 +10,7 @@ class Bullet(Sprite):
 
     """Initialize bullet object at the ship's current position."""
     def __init__(self, game):
+
         super().__init__()
         self.screen = game.screen
         self.settings = game.settings

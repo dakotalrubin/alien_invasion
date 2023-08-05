@@ -9,6 +9,7 @@ class Ship:
 
     """Initialize the ship and set its starting position."""
     def __init__(self, game):
+
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
         self.settings = game.settings
