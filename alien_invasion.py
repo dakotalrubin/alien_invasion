@@ -5,6 +5,7 @@
 import sys, pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 """This class manages game assets and behavior."""
 class AlienInvasion:
@@ -15,18 +16,23 @@ class AlienInvasion:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode(
-            (self.settings.screen_width, self.settings.screen_height))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
+        self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
 
         # Create a Ship instance using the current instance of AlienInvasion
         self.ship = Ship(self)
+
+        # Create a sprite group to contain active bullets on-screen
+        self.bullets = pygame.sprite.Group()
 
     """Run main game loop."""
     def run_game(self):
         while True:
             self.check_events()
             self.ship.update() # Update player ship position
+            self.bullets.update() # Update active bullet positions
             self.update_screen()
             self.clock.tick(60) # Game runs at 60 frames per second
 
@@ -61,6 +67,10 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
 
+        # Check if spacebar pressed
+        elif event.key == pygame.K_SPACE:
+            self.fire_bullet()
+
     """Listen for key releases."""
     def check_keyup_events(self, event):
         # Check if right arrow key released
@@ -71,9 +81,19 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    """Create new bullet and add to bullet group."""
+    def fire_bullet(self):
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
+
     """Update images on-screen and flip to new screen."""
     def update_screen(self):
         self.screen.fill(self.settings.bg_color)
+
+        # Re-draw active bullets in group with updated positions
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+
         self.ship.blitme()
         pygame.display.flip()
 
