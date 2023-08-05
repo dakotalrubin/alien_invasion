@@ -30,9 +30,15 @@ class AlienInvasion:
     """Run main game loop."""
     def run_game(self):
         while True:
+
+            # Check for player input
             self.check_events()
-            self.ship.update() # Update player ship position
-            self.bullets.update() # Update active bullet positions
+
+            # Update game object positions
+            self.ship.update()
+            self.update_bullets()
+
+            # Draw new screen with current game object positions
             self.update_screen()
             self.clock.tick(60) # Game runs at 60 frames per second
 
@@ -81,10 +87,22 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
-    """Create new bullet and add to bullet group."""
+    """Create new bullet and add to bullet group if allowed."""
     def fire_bullet(self):
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    """Update bullet positions and despawn bullets that go off-screen."""
+    def update_bullets(self):
+        
+        # Update bullet positions
+        self.bullets.update()
+
+        # For loop needs list length to be constant, so loop over copy of list
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     """Update images on-screen and flip to new screen."""
     def update_screen(self):
