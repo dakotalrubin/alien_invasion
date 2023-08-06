@@ -43,10 +43,13 @@ class AlienInvasion:
         # Game starts from inactive state
         self.game_active = False
 
+        # Calculate center ("medium") play button x-coordinate
+        center_button_x = (self.settings.screen_width / 2) - 100
+
         # Create play buttons with given text, colors and x-coordinates
-        self.easy_mode_button = Button(self, "Easy", (0, 255, 0), 446)
-        self.medium_mode_button = Button(self, "Medium", (255, 255, 0))
-        self.hard_mode_button = Button(self, "Hard", (255, 0, 0), 866)
+        self.easy_mode_button = Button(self, "Easy", (0, 255, 0), center_button_x - 210)
+        self.medium_mode_button = Button(self, "Medium", (255, 255, 0), center_button_x)
+        self.hard_mode_button = Button(self, "Hard", (255, 0, 0), center_button_x + 210)
 
     """Run main game loop."""
     def run_game(self):
@@ -251,8 +254,10 @@ class AlienInvasion:
         # The x-coordinate and y-coordinate of the next alien to spawn
         current_x, current_y = alien_width, alien_height
 
-        # Create alien and keep adding aliens until there's no room left
-        while current_y < (self.settings.screen_height - (alien_height * 3)):
+        # Keep generating aliens in rows and columns until running out of room
+        # current_y should be capped at 900 pixels so larger screens don't
+        # generate an unfairly large fleet of aliens for the player
+        while current_y < (self.settings.screen_height - (alien_height * 3)) and current_y < 900:
             while current_x < (self.settings.screen_width - (alien_width * 2)):
                 self.create_alien(current_x, current_y)
                 current_x += alien_width * 2
