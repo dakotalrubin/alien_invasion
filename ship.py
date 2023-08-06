@@ -14,15 +14,10 @@ class Ship:
         self.screen_rect = game.screen.get_rect()
         self.settings = game.settings
 
-        # Load the ship image and get its rectangle (sprite boundaries)
+        # Load ship image and get its rectangle (sprite boundaries)
         self.image = pygame.image.load("images/ships/ship_002.png")
         self.rect = self.image.get_rect()
-
-        # Start each new ship at the bottom-center of the screen
-        self.rect.midbottom = self.screen_rect.midbottom
-
-        # Store a float for the ship's horizontal position
-        self.x = float(self.rect.x)
+        self.center_ship()
 
         # Movement flags (start with a ship that's not moving)
         self.moving_right = False
@@ -43,3 +38,12 @@ class Ship:
     """Draw the ship at its current location."""
     def blitme(self):
         self.screen.blit(self.image, self.rect)
+
+    """Center the ship on-screen."""
+    def center_ship(self):
+
+        # Start each new ship at the bottom-center of the screen
+        self.rect.midbottom = self.screen_rect.midbottom
+
+        # Store a float for the ship's horizontal position
+        self.x = float(self.rect.x)
