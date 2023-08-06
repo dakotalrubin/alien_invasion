@@ -43,8 +43,10 @@ class AlienInvasion:
         # Game starts from inactive state
         self.game_active = False
 
-        # Create the Play button
-        self.play_button = Button(self, "Play")
+        # Create play buttons with given text, colors and x-coordinates
+        self.easy_mode_button = Button(self, "Easy", (0, 255, 0), 446)
+        self.medium_mode_button = Button(self, "Medium", (255, 255, 0))
+        self.hard_mode_button = Button(self, "Hard", (255, 0, 0), 866)
 
     """Run main game loop."""
     def run_game(self):
@@ -88,26 +90,36 @@ class AlienInvasion:
             # Check if player clicked mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self.check_play_button(mouse_pos)
+                self.check_play_buttons(mouse_pos)
 
-    """Start new game when player clicks Play button."""
-    def check_play_button(self, mouse_pos):
+    """Start new game when player clicks a play button."""
+    def check_play_buttons(self, mouse_pos):
 
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        # Check which play button has been clicked when game is inactive
+        # Start game on the selected difficulty level
+        if not self.game_active:
 
-        if button_clicked and not self.game_active:
-            self.start_game()
+            if self.easy_mode_button.rect.collidepoint(mouse_pos):
+                self.start_game("easy")
 
-    """Start new round of Alien Invasion if player wants."""
-    def start_game(self):
+            elif self.medium_mode_button.rect.collidepoint(mouse_pos):
+                self.start_game("medium")
+
+            elif self.hard_mode_button.rect.collidepoint(mouse_pos):
+                self.start_game("hard")
+
+    """Start new round of Alien Invasion."""
+    def start_game(self, mode):
 
         # Hide mouse cursor
         pygame.mouse.set_visible(False)
 
         # Reset game statistics and change game state to active
         self.stats.reset_stats()
-        self.settings.initialize_dynamic_settings()
         self.game_active = True
+
+        # Load dynamic settings for easy, medium or hard difficulty
+        self.settings.initialize_dynamic_settings(mode)
 
         # Remove all remaining bullets and aliens
         self.bullets.empty()
@@ -124,13 +136,15 @@ class AlienInvasion:
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
             sys.exit()
 
-        # Check if "p" key pressed to play game
+        # Check if "p" key pressed while game state inactive
+        # Play game on medium difficulty by default
         if event.key == pygame.K_p and not self.game_active:
-            self.start_game()
+            self.start_game("medium")
 
-        # Check if spacebar pressed to play game
+        # Check if spacebar pressed while game state inactive
+        # Play game on medium difficulty by default
         elif event.key == pygame.K_SPACE and not self.game_active:
-            self.start_game()
+            self.start_game("medium")
 
         # Check if right arrow key pressed
         elif event.key == pygame.K_RIGHT:
@@ -140,7 +154,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
 
-        # Check if spacebar pressed during gameplay
+        # Check if spacebar pressed while game state active
         elif event.key == pygame.K_SPACE and self.game_active:
             self.fire_bullet()
 
@@ -295,9 +309,11 @@ class AlienInvasion:
         self.ship.blitme()
         self.aliens.draw(self.screen)
 
-        # Draw the Play button if game state is inactive
+        # Draw the play buttons if game state is inactive
         if not self.game_active:
-            self.play_button.draw_button()
+            self.easy_mode_button.draw_button()
+            self.medium_mode_button.draw_button()
+            self.hard_mode_button.draw_button()
 
         pygame.display.flip()
 

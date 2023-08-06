@@ -8,20 +8,24 @@ import pygame.font
 class Button:
 
     """Initialize button attributes."""
-    def __init__(self, game, message):
+    def __init__(self, game, message, button_color, x_position=None):
 
         self.screen = game.screen
         self.screen_rect = self.screen.get_rect()
 
         # Set button dimensions and properties
         self.width, self.height = 200, 50
-        self.button_color = (0, 135, 0)
-        self.text_color = (255, 255, 255)
+        self.button_color = button_color
+        self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)
 
-        # Build button rect object and center button
+        # Build button rect, center button, space button along x-axis
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
+
+        # If button x-coordinate specified, don't use default position (center)
+        if x_position != None:
+            self.rect.x = x_position
 
         # Prep button message once
         self.prep_message(message)

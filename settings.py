@@ -13,6 +13,9 @@ class Settings:
         self.screen_height = 800
         self.bg_color = (190, 147, 228)
 
+        # Initial game difficulty
+        self.mode = "medium"
+
         # Ship settings
         self.ship_limit = 3
 
@@ -28,17 +31,26 @@ class Settings:
         # How quickly game speeds up
         self.speedup_scale = 1.1
 
-        self.initialize_dynamic_settings()
+        self.initialize_dynamic_settings(self.mode)
 
     """Initialize game settings that change over time."""
-    def initialize_dynamic_settings(self):
-
-        self.ship_speed = 3.0
-        self.bullet_speed = 4.0
-        self.alien_speed = 1.0
+    def initialize_dynamic_settings(self, mode):
 
         # fleet_direction of 1 means right, fleet_direction of -1 means left
         self.fleet_direction = 1
+
+        if mode == "easy":
+            self.ship_speed = 3.0
+            self.bullet_speed = 4.0
+            self.alien_speed = 1.0
+        elif mode == "medium":
+            self.ship_speed = 4.5
+            self.bullet_speed = 5.5
+            self.alien_speed = 1.5
+        elif mode == "hard":
+            self.ship_speed = 6.0
+            self.bullet_speed = 7.0
+            self.alien_speed = 2.0
 
     """Increase game element speed."""
     def increase_speed(self):
