@@ -7,6 +7,7 @@ from time import sleep
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -28,7 +29,9 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         # Create a GameStats instance to store game statistics
+        # Create a Scoreboard instance for scorekeeping info
         self.stats = GameStats(self)
+        self.scoreboard = Scoreboard(self)
 
         # Create a Ship instance using the current instance of AlienInvasion
         self.ship = Ship(self)
@@ -139,12 +142,12 @@ class AlienInvasion:
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
             sys.exit()
 
-        # Check if "p" key pressed while game state inactive
+        # Check if "p" key pressed while game state is inactive
         # Play game on medium difficulty by default
         if event.key == pygame.K_p and not self.game_active:
             self.start_game("medium")
 
-        # Check if spacebar pressed while game state inactive
+        # Check if spacebar pressed while game state is inactive
         # Play game on medium difficulty by default
         elif event.key == pygame.K_SPACE and not self.game_active:
             self.start_game("medium")
@@ -313,6 +316,9 @@ class AlienInvasion:
         # Re-draw ship and alien fleet with updated positions
         self.ship.blitme()
         self.aliens.draw(self.screen)
+
+        # Draw score information
+        self.scoreboard.show_score()
 
         # Draw the play buttons if game state is inactive
         if not self.game_active:
