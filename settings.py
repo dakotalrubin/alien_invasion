@@ -46,17 +46,17 @@ class Settings:
         self.alien_points = 50
 
         if mode == "easy":
-            self.ship_speed = 3.0
-            self.bullet_speed = 4.0
-            self.alien_speed = 1.0
+            self.ship_speed = 3.2
+            self.bullet_speed = 4.5
+            self.alien_speed = 1.2
         elif mode == "medium":
-            self.ship_speed = 4.5
-            self.bullet_speed = 5.5
-            self.alien_speed = 1.5
+            self.ship_speed = 4.7
+            self.bullet_speed = 6.0
+            self.alien_speed = 1.7
         elif mode == "hard":
-            self.ship_speed = 6.0
-            self.bullet_speed = 7.0
-            self.alien_speed = 2.0
+            self.ship_speed = 6.2
+            self.bullet_speed = 7.5
+            self.alien_speed = 2.2
 
     """Increase game element speed and point value growth rate."""
     def increase_speed(self):

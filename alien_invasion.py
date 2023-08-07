@@ -273,10 +273,12 @@ class AlienInvasion:
         # The x-coordinate and y-coordinate of the next alien to spawn
         current_x, current_y = alien_width, alien_height + 92
 
+        # Give the player some room at the bottom of the screen
+        vertical_spawn_limit = self.settings.screen_height - 180
+
         # Keep generating aliens in rows and columns until running out of room
-        # current_y should be capped at 720 pixels so larger screens don't
-        # generate an unfairly large fleet of aliens for the player
-        while current_y < (self.settings.screen_height - (alien_height * 3)) and current_y < 720:
+        while (current_y < (self.settings.screen_height - (alien_height * 3)) and
+            current_y < vertical_spawn_limit):
             while current_x < (self.settings.screen_width - (alien_width * 2)):
                 self.create_alien(current_x, current_y)
                 current_x += alien_width * 2
