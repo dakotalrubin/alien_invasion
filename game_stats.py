@@ -11,6 +11,9 @@ class GameStats:
         self.settings = game.settings
         self.reset_stats()
 
+        # High score should never be reset
+        self.high_score = 0
+
     """Initialize stats that can change during a game."""
     def reset_stats(self):
 

@@ -101,7 +101,7 @@ class AlienInvasion:
     """Start new game when player clicks a play button."""
     def check_play_buttons(self, mouse_pos):
 
-        # Check which play button has been clicked when game is inactive
+        # Check which play button has been clicked when game state inactive
         # Start game on the selected difficulty level
         if not self.game_active:
 
@@ -122,6 +122,7 @@ class AlienInvasion:
 
         # Reset game statistics and change game state to active
         self.stats.reset_stats()
+        self.scoreboard.prep_score()
         self.game_active = True
 
         # Load dynamic settings for easy, medium or hard difficulty
@@ -142,12 +143,12 @@ class AlienInvasion:
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
             sys.exit()
 
-        # Check if "p" key pressed while game state is inactive
+        # Check if "p" key has been pressed while game state inactive
         # Play game on medium difficulty by default
         if event.key == pygame.K_p and not self.game_active:
             self.start_game("medium")
 
-        # Check if spacebar pressed while game state is inactive
+        # Check if spacebar has been pressed while game state inactive
         # Play game on medium difficulty by default
         elif event.key == pygame.K_SPACE and not self.game_active:
             self.start_game("medium")
@@ -201,6 +202,16 @@ class AlienInvasion:
         # Check for collisions between bullets/aliens, remove colliding sprites
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
+
+        # If alien(s) destroyed, increment points and create new score image
+        if collisions:
+
+            # Increment score for every alien hit by single bullet
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+
+            self.scoreboard.prep_score()
+            self.scoreboard.check_high_score()
 
         # Remove all remaining bullets and create new alien fleet
         if not self.aliens:
