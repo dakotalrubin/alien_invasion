@@ -277,8 +277,7 @@ class AlienInvasion:
         vertical_spawn_limit = self.settings.screen_height - 180
 
         # Keep generating aliens in rows and columns until running out of room
-        while (current_y < (self.settings.screen_height - (alien_height * 3)) and
-            current_y < vertical_spawn_limit):
+        while current_y < vertical_spawn_limit:
             while current_x < (self.settings.screen_width - (alien_width * 2)):
                 self.create_alien(current_x, current_y)
                 current_x += alien_width * 2
