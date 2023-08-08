@@ -85,12 +85,8 @@ class AlienInvasion:
 
         for event in pygame.event.get():
 
-            # Check if player wants to quit game
-            if event.type == pygame.QUIT:
-                sys.exit()
-
             # Check if player pressed a key
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 self.check_keydown_events(event)
 
             # Check if player released a key
@@ -147,6 +143,11 @@ class AlienInvasion:
 
         # Check if "q" key or "Escape" key pressed to quit game
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+
+            # Write high score to "high_score.txt"
+            with open("high_score.txt", "w") as file:
+                file.write(f"{self.stats.high_score}")
+
             sys.exit()
 
         # Check if "p" key has been pressed while game state inactive

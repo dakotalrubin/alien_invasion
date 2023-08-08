@@ -11,8 +11,12 @@ class GameStats:
         self.settings = game.settings
         self.reset_stats()
 
-        # High score should never be reset
-        self.high_score = 0
+        # Load all-time high score from "high_score.txt" if possible
+        try:
+            with open("high_score.txt", "r") as file:
+                self.high_score = int(file.read())
+        except:
+            self.high_score = 0
 
     """Initialize stats that can change during a game."""
     def reset_stats(self):
