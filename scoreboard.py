@@ -3,6 +3,8 @@
 # File: scoreboard.py contains all scoring info for the Alien Invasion game.
 
 import pygame.font
+from pygame.sprite import Group
+from ship import Ship
 
 """This class contains all scorekeeping for Alien Invasion."""
 class Scoreboard:
@@ -10,7 +12,8 @@ class Scoreboard:
     """Initialize scorekeeping attributes."""
     def __init__(self, game):
 
-        # Store screen, settings and stats info
+        # Store game, screen, settings and stats info
+        self.game = game
         self.screen = game.screen
         self.screen_rect = self.screen.get_rect()
         self.settings = game.settings
@@ -20,10 +23,11 @@ class Scoreboard:
         self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)
 
-        # Prepare score, high score and level images for display
+        # Prepare score, high score, level and ship images for display
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
+        self.prep_ships()
 
     """Render score image."""
     def prep_score(self):
@@ -34,7 +38,7 @@ class Scoreboard:
         self.score_image = self.font.render(score_string, True,
             self.text_color, self.settings.bg_color)
 
-        # Position score at the top-right of the screen with 20px margin
+        # Position score image at the top-right of the screen
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
         self.score_rect.top = 20
@@ -48,7 +52,7 @@ class Scoreboard:
         self.high_score_image = self.font.render(high_score_string, True,
             self.text_color, self.settings.bg_color)
 
-        # Position high score at the top-middle of the screen
+        # Position high score image at the top-middle of the screen
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.score_rect.top
@@ -69,14 +73,38 @@ class Scoreboard:
         self.level_image = self.font.render(level_string, True,
             self.text_color, self.settings.bg_color)
 
-        # Position level at the top-right of the screen below the score
+        # Position level image at the top-right of the screen below the score
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right
         self.level_rect.top = self.score_rect.bottom + 20
 
-    """Draw score, high score and level to the screen."""
+    """Show remaining number of lives."""
+    def prep_ships(self):
+
+        # Turn lives string into a rendered image
+        lives_string = "Lives: "
+        self.lives_image = self.font.render(lives_string, True,
+            self.text_color, self.settings.bg_color)
+
+        # Position lives image at the top-left of the screen
+        self.lives_rect = self.lives_image.get_rect()
+        self.lives_rect.left = self.screen_rect.left + 20
+        self.lives_rect.top = 20
+
+        self.ships = Group()
+
+        # Create ship sprites and position them after lives image
+        for ship_number in range(self.stats.ships_left):
+            ship = Ship(self.game)
+            ship.rect.x = self.lives_rect.right + (ship_number * ship.rect.width)
+            ship.rect.y = 10
+            self.ships.add(ship)
+
+    """Draw score, high score, level and remaining lives to the screen."""
     def show_score(self):
 
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        self.screen.blit(self.lives_image, self.lives_rect)
+        self.ships.draw(self.screen)

@@ -3,13 +3,15 @@
 # File: ship.py contains all ship behavior for the Alien Invasion game.
 
 import pygame
+from pygame.sprite import Sprite
 
 """This class manages all ship behavior for Alien Invasion."""
-class Ship:
+class Ship(Sprite):
 
     """Initialize the ship and set its starting position."""
     def __init__(self, game):
 
+        super().__init__()
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
         self.settings = game.settings

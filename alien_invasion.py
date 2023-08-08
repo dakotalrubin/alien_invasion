@@ -46,13 +46,17 @@ class AlienInvasion:
         # Game starts from inactive state
         self.game_active = False
 
-        # Calculate center ("medium") play button x-coordinate
+        # Calculate center button coordinates
         center_button_x = (self.settings.screen_width / 2) - 100
+        center_button_y = (self.settings.screen_height / 2) - 25
 
         # Create play buttons with given text, colors and x-coordinates
-        self.easy_mode_button = Button(self, "Easy", (0, 255, 0), center_button_x - 210)
-        self.medium_mode_button = Button(self, "Medium", (255, 255, 0), center_button_x)
-        self.hard_mode_button = Button(self, "Hard", (255, 0, 0), center_button_x + 210)
+        self.easy_mode_button = Button(self, "Easy", (0, 255, 0),
+            center_button_x - 210, center_button_y)
+        self.medium_mode_button = Button(self, "Medium", (255, 255, 0),
+            center_button_x, center_button_y)
+        self.hard_mode_button = Button(self, "Hard", (255, 0, 0),
+            center_button_x + 210, center_button_y)
 
     """Run main game loop."""
     def run_game(self):
@@ -124,6 +128,7 @@ class AlienInvasion:
         self.stats.reset_stats()
         self.scoreboard.prep_score()
         self.scoreboard.prep_level()
+        self.scoreboard.prep_ships()
         self.game_active = True
 
         # Load dynamic settings for easy, medium or hard difficulty
@@ -229,8 +234,9 @@ class AlienInvasion:
 
         if self.stats.ships_left > 0:
 
-            # Decrement number of ships remaining
+            # Decrement number of ships remaining and update scoreboard
             self.stats.ships_left -= 1
+            self.scoreboard.prep_ships()
 
             # Remove all remaining bullets and aliens
             self.bullets.empty()
@@ -279,6 +285,7 @@ class AlienInvasion:
         # Keep generating aliens in rows and columns until running out of room
         while current_y < vertical_spawn_limit:
             while current_x < (self.settings.screen_width - (alien_width * 2)):
+
                 self.create_alien(current_x, current_y)
                 current_x += alien_width * 2
 
