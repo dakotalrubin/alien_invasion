@@ -271,7 +271,7 @@ class AlienInvasion:
     """Respond when alien hits player ship or alien reaches bottom of screen."""
     def ship_hit(self):
 
-        # Play lost life sound when ship hit or alien reaches bottom of screen
+        # Play lost life sound when alien hits ship or reaches bottom of screen
         mixer.Sound.play(self.lost_life_sound)
 
         if self.stats.ships_left > 0:
@@ -291,15 +291,15 @@ class AlienInvasion:
             # Wait half a second for player to regroup
             sleep(0.5)
 
-        # Game over
         else:
 
+            # Game over
             self.game_active = False
 
             # Show mouse cursor
             pygame.mouse.set_visible(True)
 
-    """Check if fleet at edge-of-screen, then update alien positions."""
+    """Check if alien fleet at edge-of-screen, then update alien positions."""
     def update_aliens(self):
         self.check_fleet_edges()
         self.aliens.update()
@@ -390,7 +390,7 @@ class AlienInvasion:
         # Draw score information
         self.scoreboard.show_score()
 
-        # Draw the title box and play buttons if game state inactive
+        # Draw title box and play buttons if game state inactive
         if not self.game_active:
 
             self.title_box.draw_title_box()
@@ -402,6 +402,6 @@ class AlienInvasion:
 
 if __name__ == '__main__':
 
-    # Make a game instance and run game
+    # Make a game instance and run
     game = AlienInvasion()
     game.run_game()
