@@ -111,9 +111,9 @@ class AlienInvasion:
 
         # Load boom, bullet and lost life sound effects
         self.boom_sound = pygame.mixer.Sound("../sounds/boom.wav")
-        self.boom_sound.set_volume(0.25)
+        self.boom_sound.set_volume(0.26)
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
-        self.bullet_sound.set_volume(0.25)
+        self.bullet_sound.set_volume(0.26)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
         self.lost_life_sound.set_volume(0.4)
 
