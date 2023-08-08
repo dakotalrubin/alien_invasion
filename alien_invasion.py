@@ -3,6 +3,7 @@
 # File: alien_invasion.py contains everything related to running the game.
 
 import sys, pygame
+from pygame import mixer
 from time import sleep
 
 from settings import Settings
@@ -21,6 +22,11 @@ class AlienInvasion:
     def __init__(self):
 
         pygame.init()
+
+        # Initialize mixer and load audio files
+        mixer.init()
+        self.load_sounds()
+
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
@@ -51,6 +57,7 @@ class AlienInvasion:
         center_button_x = (self.settings.screen_width / 2) - 100
         center_button_y = (self.settings.screen_height / 2) - 25
 
+        # Create title box with given attributes
         self.title_box = Title(self, "Alien Invasion", (0, 0, 255),
             (255, 255, 255), 400, 100, pygame.font.SysFont(None, 72),
             center_button_x - 100, center_button_y - 110)
@@ -186,12 +193,32 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    """Load all game music and sound effects."""
+    def load_sounds(self):
+
+        # Load music and loop indefinitely
+        # mixer.music.load("sounds/song.wav")
+        # mixer.music.set_volume(0.6)
+        # mixer.music.play(-1)
+
+        # Load boom, bullet and lost life sound effects
+        self.boom_sound = pygame.mixer.Sound("sounds/boom.wav")
+        self.boom_sound.set_volume(0.25)
+        self.bullet_sound = pygame.mixer.Sound("sounds/bullet.wav")
+        self.bullet_sound.set_volume(0.2)
+        self.lost_life_sound = pygame.mixer.Sound("sounds/lost_life.wav")
+        self.lost_life_sound.set_volume(0.3)
+
     """Create new bullet and add to bullet group if allowed."""
     def fire_bullet(self):
 
         if len(self.bullets) < self.settings.bullets_allowed:
+
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+
+            # Play bullet sound when firing bullet
+            mixer.Sound.play(self.bullet_sound)
 
     """Update bullet positions and despawn bullets that go off-screen."""
     def update_bullets(self):
@@ -218,7 +245,11 @@ class AlienInvasion:
 
             # Increment score for every alien hit by single bullet
             for aliens in collisions.values():
+
                 self.stats.score += self.settings.alien_points * len(aliens)
+
+            # Play boom sound for alien hit
+            mixer.Sound.play(self.boom_sound)
 
             self.scoreboard.prep_score()
             self.scoreboard.check_high_score()
@@ -237,8 +268,11 @@ class AlienInvasion:
         self.stats.level += 1
         self.scoreboard.prep_level()
 
-    """Respond when player ship hit by alien."""
+    """Respond when alien hits player ship or alien reaches bottom of screen."""
     def ship_hit(self):
+
+        # Play lost life sound when ship hit or alien reaches bottom of screen
+        mixer.Sound.play(self.lost_life_sound)
 
         if self.stats.ships_left > 0:
 
@@ -272,6 +306,10 @@ class AlienInvasion:
 
         # Check for alien collisions with player ship
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
+
+            # Play boom sound for ship collision
+            mixer.Sound.play(self.boom_sound)
+
             self.ship_hit()
 
         # Check for aliens hitting the bottom of the screen
