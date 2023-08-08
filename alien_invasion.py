@@ -9,6 +9,7 @@ from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
+from title import Title
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -49,6 +50,10 @@ class AlienInvasion:
         # Calculate center button coordinates
         center_button_x = (self.settings.screen_width / 2) - 100
         center_button_y = (self.settings.screen_height / 2) - 25
+
+        self.title_box = Title(self, "Alien Invasion", (0, 0, 255),
+            (255, 255, 255), 400, 100, pygame.font.SysFont(None, 72),
+            center_button_x - 100, center_button_y - 110)
 
         # Create play buttons with given text, colors and x-coordinates
         self.easy_mode_button = Button(self, "Easy", (0, 255, 0),
@@ -122,9 +127,7 @@ class AlienInvasion:
 
         # Reset game statistics and change game state to active
         self.stats.reset_stats()
-        self.scoreboard.prep_score()
-        self.scoreboard.prep_level()
-        self.scoreboard.prep_ships()
+        self.scoreboard.prep_images()
         self.game_active = True
 
         # Load dynamic settings for easy, medium or hard difficulty
@@ -144,8 +147,8 @@ class AlienInvasion:
         # Check if "q" key or "Escape" key pressed to quit game
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
 
-            # Write high score to "high_score.txt"
-            with open("high_score.txt", "w") as file:
+            # Write high score to "high_score.txt" file
+            with open("user_data/high_score.txt", "w") as file:
                 file.write(f"{self.stats.high_score}")
 
             sys.exit()
@@ -220,15 +223,19 @@ class AlienInvasion:
             self.scoreboard.prep_score()
             self.scoreboard.check_high_score()
 
-        # Remove all remaining bullets and create new alien fleet
         if not self.aliens:
-            self.bullets.empty()
-            self.create_fleet()
-            self.settings.increase_speed()
+            self.start_new_level()
 
-            # Increment level
-            self.stats.level += 1
-            self.scoreboard.prep_level()
+    """Remove all remaining bullets, create new alien fleet and increase speed."""
+    def start_new_level(self):
+
+        self.bullets.empty()
+        self.create_fleet()
+        self.settings.increase_speed()
+
+        # Increment level and update display
+        self.stats.level += 1
+        self.scoreboard.prep_level()
 
     """Respond when player ship hit by alien."""
     def ship_hit(self):
@@ -345,8 +352,10 @@ class AlienInvasion:
         # Draw score information
         self.scoreboard.show_score()
 
-        # Draw the play buttons if game state is inactive
+        # Draw the title box and play buttons if game state inactive
         if not self.game_active:
+
+            self.title_box.draw_title_box()
             self.easy_mode_button.draw_button()
             self.medium_mode_button.draw_button()
             self.hard_mode_button.draw_button()

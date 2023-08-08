@@ -11,9 +11,9 @@ class GameStats:
         self.settings = game.settings
         self.reset_stats()
 
-        # Load all-time high score from "high_score.txt" if possible
+        # Load all-time high score from "high_score.txt" file if possible
         try:
-            with open("high_score.txt", "r") as file:
+            with open("user_data/high_score.txt", "r") as file:
                 self.high_score = int(file.read())
         except:
             self.high_score = 0
