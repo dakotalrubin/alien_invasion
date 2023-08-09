@@ -9,4 +9,7 @@ To run the game, open a terminal and navigate to the project's src directory. Ma
 ## Controls
 On the main menu, click the "Easy", "Medium" or "Hard" button to begin playing the game at the selected difficulty level. Move left or right with the arrow keys and fire bullets with the space bar.  
   
-Press "q" or the "Escape" key at any time to quit the game. On the main menu, you can also press "p" or the space bar to play the game on "Medium" difficulty.
+Press "q" or the "Esc" key at any time to quit the game. On the main menu, you can also press "p" or the space bar to play the game on "Medium" difficulty.  
+  
+## Credits
+Credit goes to David Renda for the song "8 Bit Retro Funk" used during gameplay. Additional credit goes to Paul Wortmann for the player ship and alien ship sprites. All sound effects were sourced from freesound.org.

@@ -105,9 +105,9 @@ class AlienInvasion:
     def load_sounds(self):
 
         # Load music and loop indefinitely
-        # mixer.music.load("../sounds/song.wav")
-        # mixer.music.set_volume(0.6)
-        # mixer.music.play(-1)
+        mixer.music.load("../sounds/song.mp3")
+        mixer.music.set_volume(0.75)
+        mixer.music.play(-1)
 
         # Load boom, bullet and lost life sound effects
         self.boom_sound = pygame.mixer.Sound("../sounds/boom.wav")
@@ -115,7 +115,7 @@ class AlienInvasion:
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
-        self.lost_life_sound.set_volume(0.4)
+        self.lost_life_sound.set_volume(0.45)
 
     """Create menu buttons and text boxes."""
     def create_menu_ui(self):
@@ -136,6 +136,9 @@ class AlienInvasion:
             center_button_x, center_button_y)
         self.hard_mode_button = Button(self, "Hard", (255, 0, 0),
             center_button_x + 210, center_button_y)
+
+        # Load menu controls image
+        self.controls_image = pygame.image.load("../images/menu/controls.png")
 
     """Listen for keypress and mouse events."""
     def check_events(self):
@@ -409,13 +412,14 @@ class AlienInvasion:
         # Draw score information
         self.scoreboard.show_score()
 
-        # Draw title text box and play buttons if game state inactive
+        # Draw title box, play buttons and controls image if game state inactive
         if not self.game_active:
 
             self.title_text_box.draw_text_box()
             self.easy_mode_button.draw_button()
             self.medium_mode_button.draw_button()
             self.hard_mode_button.draw_button()
+            self.screen.blit(self.controls_image, (230, 445))
 
         pygame.display.flip()
 
