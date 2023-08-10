@@ -54,10 +54,10 @@ class AlienInvasion:
         # Game starts from inactive state
         self.game_active = False
 
-        # Create variable to track whether fire button held down
+        # Create variable to track whether fire button is being held
         self.holding_fire = False
 
-        # Create variable to track time of most-recently fired bullet
+        # Create variable to update time for latest fired bullet
         self.latest_fired_bullet = 0
         
         # Create variable to track delay between auto-fired bullets
@@ -74,7 +74,7 @@ class AlienInvasion:
             # Check for player input
             self.check_events()
 
-            # Fire bullets at steady rate when space bar held down
+            # Fire bullets at steady rate when fire button is being held
             if self.holding_fire:
                 self.auto_fire_bullet()
 
@@ -201,7 +201,7 @@ class AlienInvasion:
     """Listen for key presses."""
     def check_keydown_events(self, event):
 
-        # Check if "q" key or "Escape" key pressed to quit game
+        # Check if "q" key or "Escape" key has been pressed to quit game
         if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
 
             # Write high score to "high_score.txt" file
@@ -221,15 +221,15 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE and not self.game_active:
             self.start_game("medium")
 
-        # Check if right arrow key pressed
+        # Check if right arrow key has been pressed
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
 
-        # Check if left arrow key pressed
+        # Check if left arrow key has been pressed
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
 
-        # Check if spacebar pressed while game state active
+        # Check if spacebar has been pressed while game state active
         elif event.key == pygame.K_SPACE and self.game_active:
 
             self.holding_fire = True
@@ -238,15 +238,15 @@ class AlienInvasion:
     """Listen for key releases."""
     def check_keyup_events(self, event):
 
-        # Check if right arrow key released
+        # Check if right arrow key has been released
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
 
-        # Check if left arrow key released
+        # Check if left arrow key has been released
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
         
-        # Check if space bar released
+        # Check if space bar has been released
         elif event.key == pygame.K_SPACE:
             self.holding_fire = False
 
@@ -262,14 +262,13 @@ class AlienInvasion:
         # Play bullet sound when firing bullet
         mixer.Sound.play(self.bullet_sound)
 
-    """Create new bullet and add to bullet group."""
+    """Auto-fire new bullet if enough time has passed."""
     def auto_fire_bullet(self):
 
         # Calculate time since latest fired bullet
         time_since_latest_fired_bullet = (pygame.time.get_ticks() 
             - self.latest_fired_bullet)
 
-        # Auto-fire new bullet if enough time has passed
         if time_since_latest_fired_bullet >= self.firing_delay:
             self.fire_bullet()
 
