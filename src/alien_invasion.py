@@ -54,6 +54,15 @@ class AlienInvasion:
         # Game starts from inactive state
         self.game_active = False
 
+        # Create variable to track whether fire button held down
+        self.holding_fire = False
+
+        # Create variable to track time of most-recently fired bullet
+        self.latest_fired_bullet = 0
+        
+        # Create variable to track delay between auto-fired bullets
+        self.firing_delay = 200
+
         # Create all menu buttons and text boxes
         self.create_menu_ui()
 
@@ -64,6 +73,10 @@ class AlienInvasion:
 
             # Check for player input
             self.check_events()
+
+            # Fire bullets at steady rate when space bar held down
+            if self.holding_fire:
+                self.auto_fire_bullet()
 
             # If player has ships remaining
             if self.game_active:
@@ -218,6 +231,8 @@ class AlienInvasion:
 
         # Check if spacebar pressed while game state active
         elif event.key == pygame.K_SPACE and self.game_active:
+
+            self.holding_fire = True
             self.fire_bullet()
 
     """Listen for key releases."""
@@ -230,17 +245,33 @@ class AlienInvasion:
         # Check if left arrow key released
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
+        
+        # Check if space bar released
+        elif event.key == pygame.K_SPACE:
+            self.holding_fire = False
 
-    """Create new bullet and add to bullet group if allowed."""
+    """Create new bullet and add to bullet group."""
     def fire_bullet(self):
 
-        if len(self.bullets) < self.settings.bullets_allowed:
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
 
-            new_bullet = Bullet(self)
-            self.bullets.add(new_bullet)
+        # Update time for latest fired bullet
+        self.latest_fired_bullet = pygame.time.get_ticks()
 
-            # Play bullet sound when firing bullet
-            mixer.Sound.play(self.bullet_sound)
+        # Play bullet sound when firing bullet
+        mixer.Sound.play(self.bullet_sound)
+
+    """Create new bullet and add to bullet group."""
+    def auto_fire_bullet(self):
+
+        # Calculate time since latest fired bullet
+        time_since_latest_fired_bullet = (pygame.time.get_ticks() 
+            - self.latest_fired_bullet)
+
+        # Auto-fire new bullet if enough time has passed
+        if time_since_latest_fired_bullet >= self.firing_delay:
+            self.fire_bullet()
 
     """Update bullet positions and despawn bullets that go off-screen."""
     def update_bullets(self):
