@@ -20,7 +20,7 @@ class Scoreboard:
         self.stats = game.stats
 
         # Font settings for scorekeeping information
-        self.text_color = (0, 0, 0)
+        self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
 
         # Load all scoring system info to the screen
@@ -41,7 +41,7 @@ class Scoreboard:
         rounded_score = round(self.stats.score, -1)
         score_string = "Score: " + f"{rounded_score:,}"
         self.score_image = self.font.render(score_string, True,
-            self.text_color, self.settings.bg_color)
+            self.text_color, None)
 
         # Position score image at the top-right of the screen
         self.score_rect = self.score_image.get_rect()
@@ -55,7 +55,7 @@ class Scoreboard:
         rounded_high_score = round(self.stats.high_score, -1)
         high_score_string = "High Score: " + f"{rounded_high_score:,}"
         self.high_score_image = self.font.render(high_score_string, True,
-            self.text_color, self.settings.bg_color)
+            self.text_color, None)
 
         # Position high score image at the top-middle of the screen
         self.high_score_rect = self.high_score_image.get_rect()
@@ -76,12 +76,12 @@ class Scoreboard:
         # Turn level string into a rendered image
         level_string = "Level: " + str(self.stats.level)
         self.level_image = self.font.render(level_string, True,
-            self.text_color, self.settings.bg_color)
+            self.text_color, None)
 
         # Position level image at the top-right of the screen below the score
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right
-        self.level_rect.top = self.score_rect.bottom + 20
+        self.level_rect.top = self.score_rect.bottom + 10
 
     """Show remaining number of lives."""
     def prep_ships(self):
@@ -89,7 +89,7 @@ class Scoreboard:
         # Turn lives string into a rendered image
         lives_string = "Lives: "
         self.lives_image = self.font.render(lives_string, True,
-            self.text_color, self.settings.bg_color)
+            self.text_color, None)
 
         # Position lives image at the top-left of the screen
         self.lives_rect = self.lives_image.get_rect()

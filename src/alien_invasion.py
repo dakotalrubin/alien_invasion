@@ -14,6 +14,7 @@ from text_box import TextBox
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+import block
 
 """This class manages game assets and behavior."""
 class AlienInvasion:
@@ -35,6 +36,7 @@ class AlienInvasion:
         # Create game window with dimensions from settings.py
         self.screen = pygame.display.set_mode((
             self.settings.screen_width, self.settings.screen_height))
+        self.background = pygame.image.load("../images/background/background.png")
         pygame.display.set_caption("Alien Invasion")
 
         # Store game stats and scorekeeping info
@@ -46,6 +48,12 @@ class AlienInvasion:
 
         # Create a sprite group to contain active bullets on-screen
         self.bullets = pygame.sprite.Group()
+
+        # Create a sprite group to contain blocks on-screen
+        self.shape = block.shape
+        self.block_size = 6
+        self.blocks = pygame.sprite.Group()
+        self.create_multiple_blocks(0, 680)
 
         # Create a sprite group to contain active aliens on-screen
         self.aliens = pygame.sprite.Group()
@@ -128,7 +136,7 @@ class AlienInvasion:
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
-        self.lost_life_sound.set_volume(0.45)
+        self.lost_life_sound.set_volume(0.5)
 
     """Create menu buttons and text boxes."""
     def create_menu_ui(self):
@@ -250,17 +258,44 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE:
             self.holding_fire = False
 
-    """Create new bullet and add to bullet group."""
+    """Create new block between player and alien fleet."""
+    def create_block(self, x_start, y_start, x_offset):
+
+        # Iterate through rows and columns to make a block
+        for row_index, row in enumerate(self.shape):
+            for column_index, column in enumerate(row):
+
+                if column == "x":
+
+                    # Create individual parts of a block
+                    x_position = x_start + ((column_index * self.block_size) 
+                        + x_offset)
+                    y_position = y_start + (row_index * self.block_size)
+                    block_object = block.Block(self.block_size, (0, 255, 0),
+                        x_position, y_position)
+                    self.blocks.add(block_object)
+
+    """Create new blocks between player and alien fleet."""
+    def create_multiple_blocks(self, x_start, y_start):
+
+        # Create a row of 4 blocks on the screen
+        for i in range(1, 5):
+
+            self.create_block(x_start, y_start, i * 256 - ((4 - i) * 42))
+
+    """Create new bullet and add to bullet group (if allowed)."""
     def fire_bullet(self):
 
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullet_limit:
 
-        # Update time for latest fired bullet
-        self.latest_fired_bullet = pygame.time.get_ticks()
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
-        # Play bullet sound when firing bullet
-        mixer.Sound.play(self.bullet_sound)
+            # Update time for latest fired bullet
+            self.latest_fired_bullet = pygame.time.get_ticks()
+
+            # Play bullet sound when firing bullet
+            mixer.Sound.play(self.bullet_sound)
 
     """Auto-fire new bullet if enough time has passed."""
     def auto_fire_bullet(self):
@@ -326,11 +361,11 @@ class AlienInvasion:
         # Play lost life sound when alien hits ship or reaches bottom of screen
         mixer.Sound.play(self.lost_life_sound)
 
-        if self.stats.ships_left > 0:
+        # Decrement number of ships remaining and update scoreboard
+        self.stats.ships_left -= 1
+        self.scoreboard.prep_ships()
 
-            # Decrement number of ships remaining and update scoreboard
-            self.stats.ships_left -= 1
-            self.scoreboard.prep_ships()
+        if self.stats.ships_left > 0:
 
             # Remove all remaining bullets and aliens
             self.bullets.empty()
@@ -376,10 +411,10 @@ class AlienInvasion:
         alien_width, alien_height = alien.rect.size
 
         # The x-coordinate and y-coordinate of the next alien to spawn
-        current_x, current_y = alien_width, alien_height + 92
+        current_x, current_y = alien_width, alien_height + 48
 
         # Keep generating aliens in rows and columns until running out of room
-        while current_y < self.settings.screen_height - (alien_height * 3):
+        while current_y < self.settings.screen_height - (alien_height * 6):
             while current_x < (self.settings.screen_width - (alien_width * 2)):
 
                 self.create_alien(current_x, current_y)
@@ -426,10 +461,13 @@ class AlienInvasion:
                 self.ship_hit()
                 break
 
-    """Update images on-screen and flip to new screen."""
+    """Update images on the screen and flip to new screen."""
     def update_screen(self):
 
-        self.screen.fill(self.settings.bg_color)
+        self.screen.blit(self.background, (0, 0))
+
+        # Re-draw blocks with updated shapes
+        self.blocks.draw(self.screen)
 
         # Re-draw active bullets with updated positions
         for bullet in self.bullets.sprites():

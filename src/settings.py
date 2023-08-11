@@ -11,7 +11,6 @@ class Settings:
         # Screen settings
         self.screen_width = 1280
         self.screen_height = 800
-        self.bg_color = (190, 147, 228)
 
         # Initial game difficulty
         self.mode = "medium"
@@ -23,6 +22,7 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 20
         self.bullet_color = (57, 255, 20)
+        self.bullet_limit = 8
 
         # Alien settings
         self.fleet_drop_speed = 10
