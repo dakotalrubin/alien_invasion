@@ -17,11 +17,11 @@ class Block(Sprite):
         self.rect = self.image.get_rect(topleft = (x_position, y_position))
 
 shape = [
-    "    XXXXXXXXXX",
+    "       xxxx",
+    "     xxxxxxxx",
+    "    xxxxxxxxxx",
     "   xxxxxxxxxxxx",
-    "  xxxxxxxxxxxxxx",
-    " xxxxxxxxxxxxxxxx",
-    "xxxxxxxxxxxxxxxxxx",
-    "xxxxxx      xxxxxx",
+    "  xxxxxx  xxxxxx",
+    " xxxxx      xxxxx",
     "xxxx          xxxx",
-    "xxx            xxx"]
+    "xx              xx",]

@@ -51,7 +51,7 @@ class AlienInvasion:
 
         # Create a sprite group to contain blocks on-screen
         self.shape = block.shape
-        self.block_size = 6
+        self.block_size = 8
         self.blocks = pygame.sprite.Group()
         self.create_multiple_blocks(0, 680)
 
@@ -118,8 +118,9 @@ class AlienInvasion:
         self.bullets.empty()
         self.aliens.empty()
 
-        # Create new alien fleet and center player ship
+        # Create new alien fleet, new blocks and center player ship
         self.create_fleet()
+        self.create_multiple_blocks(0, 680)
         self.ship.center_ship()
 
     """Load all game music and sound effects."""
@@ -136,7 +137,7 @@ class AlienInvasion:
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
         self.blip_sound = pygame.mixer.Sound("../sounds/blip.wav")
-        self.blip_sound.set_volume(0.36)
+        self.blip_sound.set_volume(0.48)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
         self.lost_life_sound.set_volume(0.5)
 
@@ -282,7 +283,7 @@ class AlienInvasion:
 
         # Create a row of 4 evenly-spaced blocks on the screen
         for i in range(1, 5):
-            self.create_block(x_start, y_start, i * 256 - ((4 - i) * 42))
+            self.create_block(x_start, y_start, (i * 256) - ((4 - i) * 54))
 
     """Create new bullet and add to bullet group (if allowed)."""
     def fire_bullet(self):
@@ -306,6 +307,7 @@ class AlienInvasion:
         time_since_latest_fired_bullet = (pygame.time.get_ticks() 
             - self.latest_fired_bullet)
 
+        # Auto-fire new bullet at a constant rate
         if time_since_latest_fired_bullet >= self.firing_delay:
             self.fire_bullet()
 
@@ -428,7 +430,7 @@ class AlienInvasion:
         current_x, current_y = alien_width, alien_height + 72
 
         # Keep generating aliens in rows and columns until running out of room
-        while current_y < self.settings.screen_height - (alien_height * 6):
+        while current_y < self.settings.screen_height - (alien_height * 7):
             while current_x < (self.settings.screen_width - (alien_width * 2)):
 
                 self.create_alien(current_x, current_y)
@@ -437,7 +439,7 @@ class AlienInvasion:
             # Finished spawning a row of aliens
             # Reset x-coordinate and increment y-coordinate
             current_x = alien_width
-            current_y += alien_height * 2
+            current_y += alien_height * 1.5
 
     """Create alien and add to row."""
     def create_alien(self, x_position, y_position):
