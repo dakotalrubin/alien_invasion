@@ -130,11 +130,13 @@ class AlienInvasion:
         mixer.music.set_volume(0.75)
         mixer.music.play(-1)
 
-        # Load boom, bullet and lost life sound effects
+        # Load boom, bullet, blip and lost life sound effects
         self.boom_sound = pygame.mixer.Sound("../sounds/boom.wav")
         self.boom_sound.set_volume(0.26)
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
+        self.blip_sound = pygame.mixer.Sound("../sounds/blip.wav")
+        self.blip_sound.set_volume(0.36)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
         self.lost_life_sound.set_volume(0.5)
 
@@ -268,24 +270,24 @@ class AlienInvasion:
                 if column == "x":
 
                     # Create individual parts of a block
-                    x_position = x_start + ((column_index * self.block_size) 
+                    x_position = x_start + ((column_index * self.block_size)
                         + x_offset)
                     y_position = y_start + (row_index * self.block_size)
-                    block_object = block.Block(self.block_size, (0, 255, 0),
+                    block_object = block.Block(self.block_size, (0, 255, 255),
                         x_position, y_position)
                     self.blocks.add(block_object)
 
     """Create new blocks between player and alien fleet."""
     def create_multiple_blocks(self, x_start, y_start):
 
-        # Create a row of 4 blocks on the screen
+        # Create a row of 4 evenly-spaced blocks on the screen
         for i in range(1, 5):
-
             self.create_block(x_start, y_start, i * 256 - ((4 - i) * 42))
 
     """Create new bullet and add to bullet group (if allowed)."""
     def fire_bullet(self):
 
+        # Allow player a maximum of 8 bullets on-screen at a time
         if len(self.bullets) < self.settings.bullet_limit:
 
             new_bullet = Bullet(self)
@@ -318,7 +320,19 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        self.check_bullet_block_collisions()
         self.check_bullet_alien_collisions()
+
+    """Respond to bullet-block collisions."""
+    def check_bullet_block_collisions(self):
+
+        # Check for collisions between bullets/blocks, remove colliding sprites
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.blocks, True, True)
+
+        # If block(s) destroyed, play blip sound
+        if collisions:
+            mixer.Sound.play(self.blip_sound)
 
     """Respond to bullet-alien collisions."""
     def check_bullet_alien_collisions(self):
@@ -411,7 +425,7 @@ class AlienInvasion:
         alien_width, alien_height = alien.rect.size
 
         # The x-coordinate and y-coordinate of the next alien to spawn
-        current_x, current_y = alien_width, alien_height + 48
+        current_x, current_y = alien_width, alien_height + 72
 
         # Keep generating aliens in rows and columns until running out of room
         while current_y < self.settings.screen_height - (alien_height * 6):
@@ -461,7 +475,7 @@ class AlienInvasion:
                 self.ship_hit()
                 break
 
-    """Update images on the screen and flip to new screen."""
+    """Update images on-screen and flip to new screen."""
     def update_screen(self):
 
         self.screen.blit(self.background, (0, 0))

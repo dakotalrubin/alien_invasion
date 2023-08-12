@@ -17,6 +17,7 @@ class Block(Sprite):
         self.rect = self.image.get_rect(topleft = (x_position, y_position))
 
 shape = [
+    "    XXXXXXXXXX",
     "   xxxxxxxxxxxx",
     "  xxxxxxxxxxxxxx",
     " xxxxxxxxxxxxxxxx",

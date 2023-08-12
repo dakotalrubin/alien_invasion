@@ -12,4 +12,4 @@ On the main menu, click the "Easy", "Medium" or "Hard" button to begin playing t
 Press "q" or the "Esc" key at any time to quit the game. On the main menu, you can also press "p" or the space bar to play the game on "Medium" difficulty.  
   
 ## Credits
-Credit goes to David Renda for the song "8 Bit Retro Funk" used during gameplay. Additional credit goes to Paul Wortmann for the player ship and alien ship sprites. All sound effects were sourced from freesound.org.
+Credit goes to David Renda for the song "8 Bit Retro Funk" used during gameplay. Additional credit goes to Paul Wortmann for the player ship and alien ship sprites. Background image credit goes to wallpapersden.com. All sound effects were sourced from freesound.org.
