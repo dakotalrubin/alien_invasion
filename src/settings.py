@@ -22,6 +22,7 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 20
         self.bullet_color = (0, 255, 0)
+        self.alien_bullet_color = (255, 0, 0)
         self.bullet_limit = 8
 
         # Alien settings
@@ -51,11 +52,11 @@ class Settings:
         elif mode == "medium":
             self.ship_speed = 4.0
             self.bullet_speed = 6.0
-            self.alien_speed = 1.4
+            self.alien_speed = 1.25
         elif mode == "hard":
             self.ship_speed = 5.0
             self.bullet_speed = 7.0
-            self.alien_speed = 1.8
+            self.alien_speed = 1.5
 
     """Increase game element speed and point value growth rate."""
     def increase_speed(self):

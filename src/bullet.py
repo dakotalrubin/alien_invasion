@@ -16,7 +16,7 @@ class Bullet(Sprite):
         self.settings = game.settings
         self.color = self.settings.bullet_color
 
-        # Create bullet sprite (rect) at top-left of screen (0, 0)
+        # Create bullet sprite at top-left of screen (0, 0)
         self.rect = pygame.Rect(0, 0, self.settings.bullet_width,
             self.settings.bullet_height)
 
@@ -31,8 +31,6 @@ class Bullet(Sprite):
 
         # Update bullet position (decrease the y-coordinate)
         self.y -= self.settings.bullet_speed
-
-        # Update bullet sprite (rect) position
         self.rect.y = self.y
 
     """Draw the bullet's new position to the screen."""

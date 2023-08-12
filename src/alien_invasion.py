@@ -5,6 +5,7 @@
 import sys, pygame
 from pygame import mixer
 from time import sleep
+from random import choice
 
 from settings import Settings
 from game_stats import GameStats
@@ -14,6 +15,7 @@ from text_box import TextBox
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from alien_bullet import AlienBullet
 import block
 
 """This class manages game assets and behavior."""
@@ -46,18 +48,23 @@ class AlienInvasion:
         # Create a Ship instance using the current game instance
         self.ship = Ship(self)
 
-        # Create a sprite group to contain active bullets on-screen
+        # Create a sprite group to contain all active bullets
         self.bullets = pygame.sprite.Group()
+        self.alien_bullets = pygame.sprite.Group()
 
-        # Create a sprite group to contain blocks on-screen
+        # Create a sprite group to contain all blocks
         self.shape = block.shape
         self.block_size = 8
         self.blocks = pygame.sprite.Group()
         self.create_multiple_blocks(0, 680)
 
-        # Create a sprite group to contain active aliens on-screen
+        # Create sprite groups to contain active aliens and alien bullets
         self.aliens = pygame.sprite.Group()
+        self.alien_bullets = pygame.sprite.Group()
         self.create_fleet()
+
+        # Create custom event for firing alien bullets
+        self.alien_bullet_event = pygame.USEREVENT + 1
 
         # Game starts from inactive state
         self.game_active = False
@@ -101,7 +108,7 @@ class AlienInvasion:
             self.clock.tick(60)
 
     """Start new round of Alien Invasion."""
-    def start_game(self, mode):
+    def start_game(self, mode, alien_firing_speed):
 
         # Hide mouse cursor
         pygame.mouse.set_visible(False)
@@ -113,10 +120,12 @@ class AlienInvasion:
 
         # Load dynamic settings for easy, medium or hard difficulty
         self.settings.initialize_dynamic_settings(mode)
+        pygame.time.set_timer(self.alien_bullet_event, alien_firing_speed)
 
-        # Remove all remaining bullets and aliens
+        # Remove all remaining bullets, aliens and alien bullets
         self.bullets.empty()
         self.aliens.empty()
+        self.alien_bullets.empty()
 
         # Create new alien fleet, new blocks and center player ship
         self.create_fleet()
@@ -131,13 +140,17 @@ class AlienInvasion:
         mixer.music.set_volume(0.75)
         mixer.music.play(-1)
 
-        # Load boom, bullet, blip and lost life sound effects
+        # Load all sound effects
         self.boom_sound = pygame.mixer.Sound("../sounds/boom.wav")
-        self.boom_sound.set_volume(0.26)
+        self.boom_sound.set_volume(0.28)
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
+        self.alien_bullet_sound = pygame.mixer.Sound("../sounds/alien_bullet.wav")
+        self.alien_bullet_sound.set_volume(0.25)
         self.blip_sound = pygame.mixer.Sound("../sounds/blip.wav")
-        self.blip_sound.set_volume(0.48)
+        self.blip_sound.set_volume(0.45)
+        self.shield_down_sound = pygame.mixer.Sound("../sounds/shield_down.wav")
+        self.shield_down_sound.set_volume(0.34)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
         self.lost_life_sound.set_volume(0.5)
 
@@ -169,6 +182,10 @@ class AlienInvasion:
 
         for event in pygame.event.get():
 
+            # Check if it's time for alien to fire bullet
+            if event.type == self.alien_bullet_event:
+                self.fire_alien_bullet()
+
             # Check if player pressed a key
             if event.type == pygame.KEYDOWN:
                 self.check_keydown_events(event)
@@ -197,17 +214,17 @@ class AlienInvasion:
     def check_play_buttons(self, mouse_pos):
 
         # Check which play button has been clicked when game state inactive
-        # Start game on the selected difficulty level
+        # Start game on selected difficulty level with given alien firing speed
         if not self.game_active:
 
             if self.easy_mode_button.rect.collidepoint(mouse_pos):
-                self.start_game("easy")
+                self.start_game("easy", 1200)
 
             elif self.medium_mode_button.rect.collidepoint(mouse_pos):
-                self.start_game("medium")
+                self.start_game("medium", 1000)
 
             elif self.hard_mode_button.rect.collidepoint(mouse_pos):
-                self.start_game("hard")
+                self.start_game("hard", 800)
 
     """Listen for key presses."""
     def check_keydown_events(self, event):
@@ -268,12 +285,13 @@ class AlienInvasion:
         for row_index, row in enumerate(self.shape):
             for column_index, column in enumerate(row):
 
+                # Create individual parts of a block
                 if column == "x":
 
-                    # Create individual parts of a block
                     x_position = x_start + ((column_index * self.block_size)
                         + x_offset)
                     y_position = y_start + (row_index * self.block_size)
+
                     block_object = block.Block(self.block_size, (0, 255, 255),
                         x_position, y_position)
                     self.blocks.add(block_object)
@@ -281,7 +299,7 @@ class AlienInvasion:
     """Create new blocks between player and alien fleet."""
     def create_multiple_blocks(self, x_start, y_start):
 
-        # Create a row of 4 evenly-spaced blocks on the screen
+        # Create row of 4 evenly-spaced blocks on the screen
         for i in range(1, 5):
             self.create_block(x_start, y_start, (i * 256) - ((4 - i) * 54))
 
@@ -307,30 +325,65 @@ class AlienInvasion:
         time_since_latest_fired_bullet = (pygame.time.get_ticks() 
             - self.latest_fired_bullet)
 
-        # Auto-fire new bullet at a constant rate
+        # Auto-fire new bullet after given delay
         if time_since_latest_fired_bullet >= self.firing_delay:
             self.fire_bullet()
+
+    """Fire a bullet from a random alien ship."""
+    def fire_alien_bullet(self):
+
+        # Check to make sure at least one alien ship exists
+        if self.aliens.sprites() and self.game_active:
+
+            random_alien = choice(self.aliens.sprites())
+            alien_bullet = AlienBullet(self, random_alien)
+            self.alien_bullets.add(alien_bullet)
+
+            # Play alien bullet sound when bullet spawns
+            mixer.Sound.play(self.alien_bullet_sound)
 
     """Update bullet positions and despawn bullets that go off-screen."""
     def update_bullets(self):
 
-        # Update bullet positions
+        # Update bullet and alien bullet positions
         self.bullets.update()
+        self.alien_bullets.update()
 
         # For loop needs list length to be constant, so loop over copy of list
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        # Repeat procedure for alien bullets
+        for alien_bullet in self.alien_bullets.copy():
+            if alien_bullet.rect.top >= self.settings.screen_height:
+                self.alien_bullets.remove(alien_bullet)
+
+        # Check collisions between bullets and all game objects
         self.check_bullet_block_collisions()
+        self.check_alien_bullet_block_collisions()
         self.check_bullet_alien_collisions()
+        self.check_alien_bullet_ship_collisions()
 
     """Respond to bullet-block collisions."""
     def check_bullet_block_collisions(self):
 
-        # Check for collisions between bullets/blocks, remove colliding sprites
+        # Check for collisions between bullets and blocks
+        # Remove colliding sprites
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.blocks, True, True)
+
+        # If block(s) destroyed, play blip sound
+        if collisions:
+            mixer.Sound.play(self.blip_sound)
+
+    """Respond to alien bullet-block collisions."""
+    def check_alien_bullet_block_collisions(self):
+
+        # Check for collisions between alien bullets and blocks
+        # Remove colliding sprites
+        collisions = pygame.sprite.groupcollide(
+            self.alien_bullets, self.blocks, True, True)
 
         # If block(s) destroyed, play blip sound
         if collisions:
@@ -360,10 +413,20 @@ class AlienInvasion:
         if not self.aliens:
             self.start_new_level()
 
+    """Respond to alien bullet-ship collisions."""
+    def check_alien_bullet_ship_collisions(self):
+
+        # Check for collisions between alien bullets and player ship
+        if pygame.sprite.spritecollideany(self.ship, self.alien_bullets):
+
+            mixer.Sound.play(self.boom_sound)
+            self.ship_hit()
+
     """Remove all remaining bullets, create new alien fleet and increase speed."""
     def start_new_level(self):
 
         self.bullets.empty()
+        self.alien_bullets.empty()
         self.create_fleet()
         self.settings.increase_speed()
 
@@ -386,6 +449,7 @@ class AlienInvasion:
             # Remove all remaining bullets and aliens
             self.bullets.empty()
             self.aliens.empty()
+            self.alien_bullets.empty()
 
             # Create new alien fleet and center player ship
             self.create_fleet()
@@ -408,7 +472,14 @@ class AlienInvasion:
         self.check_fleet_edges()
         self.aliens.update()
 
-        # Check for alien collision with player ship
+        # Check for aliens colliding with blocks
+        for alien in self.aliens:
+
+            # Destroy blocks and play shield down sound
+            if pygame.sprite.spritecollide(alien, self.blocks, True):
+                mixer.Sound.play(self.shield_down_sound)
+
+        # Check for aliens colliding with the player ship
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
 
             # Play boom sound for ship collision
@@ -488,6 +559,10 @@ class AlienInvasion:
         # Re-draw active bullets with updated positions
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+
+        # Re-draw active alien bullets with updated positions
+        for alien_bullet in self.alien_bullets.sprites():
+            alien_bullet.draw_bullet()
 
         # Re-draw ship and alien fleet with updated positions
         self.ship.blitme()

@@ -15,7 +15,7 @@ class Alien(Sprite):
         self.screen = game.screen
         self.settings = game.settings
 
-        # Load alien image and get its rectangle (sprite boundaries)
+        # Load alien image and get its sprite dimensions
         self.image = pygame.image.load("../images/ships/ship_017.png")
         self.rect = self.image.get_rect()
 
@@ -26,7 +26,7 @@ class Alien(Sprite):
         # Store float for an alien's horizontal position
         self.x = float(self.rect.x)
 
-    """Return True if alien hit edge of screen."""
+    """Return True if an alien hits the edge of the screen."""
     def check_edges(self):
 
         screen_rect = self.screen.get_rect()
