@@ -17,7 +17,7 @@ class Ship(Sprite):
         self.settings = game.settings
 
         # Load ship image and get its sprite dimensions
-        self.image = pygame.image.load("../images/ships/ship_002.png")
+        self.image = pygame.image.load("../images/sprites/ship.png")
         self.rect = self.image.get_rect()
         self.center_ship()
 

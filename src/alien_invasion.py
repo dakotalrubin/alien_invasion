@@ -61,7 +61,6 @@ class AlienInvasion:
         # Create sprite groups to contain active aliens and alien bullets
         self.aliens = pygame.sprite.Group()
         self.alien_bullets = pygame.sprite.Group()
-        self.create_fleet()
 
         # Create custom event for firing alien bullets
         self.alien_bullet_event = pygame.USEREVENT + 1
@@ -142,7 +141,7 @@ class AlienInvasion:
 
         # Load all sound effects
         self.boom_sound = pygame.mixer.Sound("../sounds/boom.wav")
-        self.boom_sound.set_volume(0.28)
+        self.boom_sound.set_volume(0.27)
         self.bullet_sound = pygame.mixer.Sound("../sounds/bullet.wav")
         self.bullet_sound.set_volume(0.26)
         self.alien_bullet_sound = pygame.mixer.Sound("../sounds/alien_bullet.wav")
@@ -150,7 +149,7 @@ class AlienInvasion:
         self.blip_sound = pygame.mixer.Sound("../sounds/blip.wav")
         self.blip_sound.set_volume(0.45)
         self.shield_down_sound = pygame.mixer.Sound("../sounds/shield_down.wav")
-        self.shield_down_sound.set_volume(0.34)
+        self.shield_down_sound.set_volume(0.35)
         self.lost_life_sound = pygame.mixer.Sound("../sounds/lost_life.wav")
         self.lost_life_sound.set_volume(0.5)
 
@@ -242,12 +241,12 @@ class AlienInvasion:
         # Check if "p" key has been pressed while game state inactive
         # Play game on medium difficulty by default
         if event.key == pygame.K_p and not self.game_active:
-            self.start_game("medium")
+            self.start_game("medium", 1000)
 
         # Check if spacebar has been pressed while game state inactive
         # Play game on medium difficulty by default
         elif event.key == pygame.K_SPACE and not self.game_active:
-            self.start_game("medium")
+            self.start_game("medium", 1000)
 
         # Check if right arrow key has been pressed
         elif event.key == pygame.K_RIGHT:
@@ -446,7 +445,7 @@ class AlienInvasion:
 
         if self.stats.ships_left > 0:
 
-            # Remove all remaining bullets and aliens
+            # Remove all remaining bullets, aliens and alien bullets
             self.bullets.empty()
             self.aliens.empty()
             self.alien_bullets.empty()

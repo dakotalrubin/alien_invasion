@@ -4,6 +4,7 @@
 
 import pygame
 from pygame.sprite import Sprite
+from random import choice
 
 """This class manages all alien behavior for Alien Invasion."""
 class Alien(Sprite):
@@ -15,8 +16,13 @@ class Alien(Sprite):
         self.screen = game.screen
         self.settings = game.settings
 
-        # Load alien image and get its sprite dimensions
-        self.image = pygame.image.load("../images/ships/ship_017.png")
+        # Load a random alien sprite
+        aliens = ["../images/sprites/alien1.png", "../images/sprites/alien2.png",
+            "../images/sprites/alien3.png"]
+        random_alien = choice(aliens)
+
+        # Get alien sprite dimensions
+        self.image = pygame.image.load(random_alien)
         self.rect = self.image.get_rect()
 
         # Start each new alien at the top-left of the screen
