@@ -21,7 +21,7 @@ class Scoreboard:
 
         # Font settings for scorekeeping information
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.Font("../font/8_bit_madness.ttf", 48)
 
         # Load all scoring system info to the screen
         self.prep_images()
