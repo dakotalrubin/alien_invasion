@@ -12,4 +12,4 @@ On the main menu, click the "Easy", "Medium" or "Hard" button to begin playing t
 Press "q" or the "Esc" key at any time to quit the game. On the main menu, you can also press "p" or the space bar to play the game on "Medium" difficulty.  
   
 ## Credits
-Credit goes to David Renda for the song "8 Bit Retro Funk" used during gameplay. Credit for the background image goes to wallpapersden.com. All sound effects were sourced from freesound.org.
+Credit goes to David Renda for the song "8 Bit Retro Funk" used during gameplay. Credit for the background image goes to wallpapersden.com. The font used throughout the game is called "Eight-Bit Madness" by Tsunamical. All sound effects were sourced from freesound.org.

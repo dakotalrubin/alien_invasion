@@ -45,11 +45,11 @@ class AlienInvasion:
         self.stats = GameStats(self)
         self.scoreboard = Scoreboard(self)
 
-        # Create a sprite group to contain player ship
+        # Create a sprite group to contain the player ship
         self.ship = Ship(self)
         self.ship_group = pygame.sprite.Group()
 
-        # Create a sprite group to contain active bullets and alien bullets
+        # Create sprite groups to contain active bullets and alien bullets
         self.bullets = pygame.sprite.Group()
         self.alien_bullets = pygame.sprite.Group()
 
@@ -132,9 +132,11 @@ class AlienInvasion:
         pygame.time.set_timer(self.alien_bullet_event, alien_firing_speed)
 
         # Remove all remaining bullets, aliens and alien bullets
+        # Reset player ship bullet sound level back to full
         self.bullets.empty()
         self.aliens.empty()
         self.alien_bullets.empty()
+        self.bullet_sound.set_volume(0.26)
 
         # Create new alien fleet, new blocks and center player ship
         self.create_fleet()
@@ -352,11 +354,14 @@ class AlienInvasion:
         # Draw title box, play buttons and controls image if game state inactive
         if not self.game_active:
 
+            # Mute bullet sound if player gets a game over while firing bullets
+            self.bullet_sound.set_volume(0)
+
             self.title_text_box.draw_text_box()
             self.easy_mode_button.draw_button()
             self.medium_mode_button.draw_button()
             self.hard_mode_button.draw_button()
-            self.screen.blit(self.controls_image, (238, 445))
+            self.screen.blit(self.controls_image, (240, 445))
 
         pygame.display.flip()
 
@@ -390,7 +395,7 @@ class AlienInvasion:
 
         # Create row of 4 evenly-spaced blocks on the screen
         for i in range(1, 5):
-            self.create_block(x_start, y_start, (i * 256) - ((4 - i) * 49))
+            self.create_block(x_start, y_start, (i * 256) - ((4 - i) * 48))
 
     """Create new bullet and add to bullet group (if allowed)."""
     def fire_bullet(self):
@@ -536,6 +541,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
 
             # Add new player ship for rendering
+            self.ship_group.empty()
             self.ship_group.add(self.ship)
 
             # Pause the game after losing a life
@@ -627,11 +633,11 @@ class AlienInvasion:
 
         for alien in self.aliens.sprites():
             if alien.rect.bottom >= self.settings.screen_height:
-                self.alien_reached_bottom()
+                self.alien_reaches_bottom()
                 break
 
     """Respond when an alien reaches the bottom of the screen."""
-    def alien_reached_bottom(self):
+    def alien_reaches_bottom(self):
 
         # Keep rendering player ship sprite since it wasn't destroyed
         self.alien_at_bottom = True
