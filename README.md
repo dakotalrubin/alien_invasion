@@ -1,5 +1,7 @@
 # alien_invasion
   
+![alt text](https://github.com/dakotalrubin/alien_invasion/blob/main/images/gameplay_screenshot.png?raw=true)
+  
 ## Description
 A 2D top-down shooter game written using Python  
   
